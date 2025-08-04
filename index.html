@@ -22,8 +22,59 @@
     <img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
   </noscript>
+
+  <!-- ✅ Estilos para contador y notificaciones -->
+  <style>
+    .contador-falso {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background-color: black;
+      color: gold;
+      font-weight: bold;
+      padding: 10px 15px;
+      border: 2px solid gold;
+      border-radius: 8px;
+      z-index: 9999;
+      font-size: 14px;
+      font-family: 'Arial Black', sans-serif;
+    }
+
+    .notificaciones-falsas {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      max-width: 280px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .notificacion {
+      background: rgba(0, 0, 0, 0.85);
+      color: gold;
+      border: 2px solid gold;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      animation: desaparecer 6s forwards;
+    }
+
+    @keyframes desaparecer {
+      0% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
 </head>
+
 <body>
+  <!-- ✅ Contador y notificaciones falsas -->
+  <div class="contador-falso">👥 Usuarios conectados: <span id="contador">124</span></div>
+  <div class="notificaciones-falsas" id="notificaciones-falsas"></div>
+
+  <!-- ✅ Tu contenido original sin cambios -->
   <div class="hero">
     <h1 class="animated-title">🔥 ¡REGÍSTRATE Y COMIENZA A GANAR! 🔥</h1>
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
