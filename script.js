@@ -1,27 +1,27 @@
-// 🚫 Detectar bots de Facebook, Instagram, crawlers
-const esBot = /bot|crawler|facebookexternalhit|Facebot|WhatsApp/i.test(navigator.userAgent);
-
-// 🔒 Camuflaje para evitar revisión automática
-if (esBot) {
-  // Ocultar botón de WhatsApp
-  const link = document.getElementById("whatsapp-link");
-  if (link) link.style.display = "none";
-
-  // Cambiar títulos o textos sensibles
-  const h1 = document.querySelector(".hero h1");
-  if (h1) h1.textContent = "🎉 Bienvenido a nuestra promo especial";
-
-  const p1 = document.querySelectorAll(".highlight")[0];
-  const p2 = document.querySelectorAll(".highlight")[1];
-  if (p1) p1.textContent = "Promoción válida por tiempo limitado";
-  if (p2) p2.textContent = "🎯 Experiencia interactiva sin costo inicial";
-
-  // Pausar contador y notificaciones falsas
-  clearInterval();
-}
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Página cargada correctamente.");
 
+  // 🚫 CAMUFLAJE: detectar bots y ocultar info sensible
+  const esBot = /bot|crawler|facebookexternalhit|Facebot|WhatsApp/i.test(navigator.userAgent);
+  if (esBot) {
+    console.warn("Bot detectado. Aplicando camuflaje...");
+
+    const link = document.getElementById("whatsapp-link");
+    if (link) link.style.display = "none";
+
+    const h1 = document.querySelector(".hero h1");
+    if (h1) h1.textContent = "🎉 Bienvenido a nuestra promo especial";
+
+    const p1 = document.querySelectorAll(".highlight")[0];
+    const p2 = document.querySelectorAll(".highlight")[1];
+    if (p1) p1.textContent = "Promoción válida por tiempo limitado";
+    if (p2) p2.textContent = "🎯 Experiencia interactiva sin costo inicial";
+
+    // Bloquear contador y notificaciones falsas
+    return; // 🛑 Corta el script para bots, no ejecuta nada más
+  }
+
+  // ✅ EVENTO LEAD
   const whatsappBtn = document.getElementById("whatsapp-link");
 
   if (whatsappBtn) {
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ Contador falso de usuarios conectados
+  // ✅ CONTADOR FALSO
   let contador = 124;
   const contadorElemento = document.getElementById("contador");
   if (contadorElemento) {
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // ✅ Notificaciones falsas de premios
+  // ✅ NOTIFICACIONES FALSAS
   const nombres = ["Lucas", "Camila", "Martín", "Sofía", "Juan", "Valentina", "Tomás", "Mica"];
   const premios = ["$5.000", "$10.000", "50 giros", "🎁 caja sorpresa", "$20.000", "jackpot 🔥"];
   const contenedorNotis = document.getElementById("notificaciones-falsas");
