@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ganamos.co - ¡Gana y Disfruta!</title>
   <link rel="stylesheet" href="estilo.css" />
-  <script defer src="script.js"></script>
+
+  <!-- Meta Pixel Code -->
   <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -22,6 +23,35 @@
     <img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
   </noscript>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const whatsappBtn = document.getElementById("whatsapp-link");
+
+      if (whatsappBtn) {
+        whatsappBtn.addEventListener("click", () => {
+          // Pixel Purchase event
+          if (typeof fbq !== "undefined") {
+            fbq('track', 'Purchase');
+          }
+
+          // CAPI Purchase event
+          fetch('/api/conversion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              event_name: 'Purchase',
+              event_source_url: document.referrer || window.location.href
+            })
+          }).then(res => {
+            console.log("Evento Purchase enviado a Meta API");
+          }).catch(err => {
+            console.error("Error enviando evento a Meta:", err);
+          });
+        });
+      }
+    });
+  </script>
 
   <style>
     .contador-falso {
@@ -66,7 +96,6 @@
       100% { opacity: 0; transform: translateY(-20px); }
     }
 
-    /* ✅ Estilo botón nuevo */
     .boton-wsp {
       text-decoration: none;
       display: inline-block;
@@ -97,7 +126,6 @@
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
     <p class="highlight">🎰 +2000 tragamonedas | ✨ Retiros sin límite | 🍱 Bonos exclusivos</p>
 
-    <!-- ✅ Botón mejorado con mensaje predefinido -->
     <a id="whatsapp-link" class="boton-wsp" target="_blank"
       href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
       👉 Consultá tu beneficio ahora por WhatsApp
