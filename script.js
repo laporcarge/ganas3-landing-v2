@@ -27,7 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           event_name: 'Purchase',
-          event_source_url: document.referrer || window.location.href
+          event_source_url: document.referrer || window.location.href,
+          custom_data: {
+            value: 3000,
+            currency: "ARS"
+          }
         })
       }).then(res => {
         console.log("Evento Purchase enviado a Meta API");
@@ -53,3 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function mostrarNoti() {
     if (!contenedorNotis) return;
+
+    const nombre = nombres[Math.floor(Math.random() * nombres.length)];
+    const premio = premios[Math.floor(Math.random() * premios.length)];
+    const mensaje = `🎉 ${nombre} acaba de ganar ${premio}!`;
+
+    const noti = document.createElement("div");
+    noti.classList.add("notificacion");
+    noti.textContent = mensaje;
+    contenedorNotis.appendChild(noti);
+
+    setTimeout(() => {
+      noti.remove();
+    }, 6000);
+  }
+
+  if (contenedorNotis) {
+    setInterval(mostrarNoti, 3000);
+  }
+});
