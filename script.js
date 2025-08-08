@@ -19,14 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (whatsappBtn) {
     whatsappBtn.addEventListener("click", () => {
       if (typeof fbq !== "undefined") {
-        fbq('track', 'Purchase');
+        fbq('track', 'Lead'); // ✅ CAMBIADO de 'Purchase' a 'Lead'
       }
 
       fetch('/api/conversion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          event_name: 'Purchase',
+          event_name: 'Lead', // ✅ CAMBIADO de 'Purchase' a 'Lead'
           event_source_url: document.referrer || window.location.href,
           custom_data: {
             value: 3000,
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         })
       }).then(res => {
-        console.log("Evento Purchase enviado a Meta API");
+        console.log("Evento Lead enviado a Meta API");
       }).catch(err => {
         console.error("Error enviando evento a Meta:", err);
       });
