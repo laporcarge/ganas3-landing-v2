@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const pixelId = '747470498138166';
 
     const eventSourceUrl = req.body.event_source_url || req.headers.referer || '';
-    const eventName = req.body.event_name || 'Purchase';
+    const eventName = req.body.event_name || 'Lead'; // ✅ CAMBIADO DE 'Purchase' A 'Lead'
     const eventId = `evt_${Date.now()}`;
     const eventTime = Math.floor(Date.now() / 1000);
 
