@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
-  <!-- Meta Pixel Code -->
+  <!-- Meta Pixel -->
   <script>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -38,18 +38,8 @@
         center/cover no-repeat;
     }
 
-    .animated-title{
-      font-size:2.2rem;
-      font-weight:600;
-      animation:fadeIn 1.5s ease-in-out;
-      text-shadow:2px 2px 5px rgba(0,0,0,.8);
-    }
-    .highlight{
-      font-size:1.05rem;
-      font-weight:400;
-      margin:10px 0;
-      text-shadow:2px 2px 5px rgba(0,0,0,.8);
-    }
+    .animated-title{font-size:2.2rem;font-weight:600;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
+    .highlight{font-size:1.05rem;font-weight:400;margin:10px 0;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
 
     .boton-wsp{
       text-decoration:none;
@@ -63,55 +53,20 @@
       margin-top:20px;
       box-shadow:0 4px 15px rgba(0,0,0,.5);
       transition:transform .2s ease, background-color .3s ease;
-      animation:pulse 1.6s infinite;
     }
-    .boton-wsp:hover{
-      background-color:#1da851;
-      transform:scale(1.03);
-    }
+    .boton-wsp:hover{background-color:#1da851;transform:scale(1.03)}
 
     .contador-falso{
-      position:fixed;
-      top:10px;
-      left:10px;
-      background:#000;
-      color:gold;
-      font-weight:bold;
-      padding:10px 15px;
-      border:2px solid gold;
-      border-radius:8px;
-      z-index:9999;
-      font-size:14px;
+      position:fixed;top:10px;left:10px;
+      background:#000;color:gold;font-weight:bold;
+      padding:10px 15px;border:2px solid gold;
+      border-radius:8px;z-index:9999;font-size:14px;
     }
-    .notificaciones-falsas{
-      position:fixed;
-      bottom:20px;
-      right:20px;
-      max-width:280px;
-      z-index:9999;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .notificacion{
-      background:rgba(0,0,0,.85);
-      color:gold;
-      border:2px solid gold;
-      padding:10px;
-      border-radius:10px;
-      font-size:.95rem;
-      animation:desaparecer 6s forwards;
-    }
-
-    @keyframes desaparecer{0%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
   </style>
 </head>
 
 <body>
   <div class="contador-falso">👥 Usuarios conectados: <span id="contador">124</span></div>
-  <div class="notificaciones-falsas" id="notificaciones-falsas"></div>
 
   <div class="hero">
     <h1 class="animated-title">🔥 ¡REGÍSTRATE Y COMIENZA A GANAR! 🔥</h1>
@@ -125,64 +80,36 @@
   </div>
 
   <script>
-    function sendCapi(payload){
-      try{
-        const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
-        if (navigator.sendBeacon) return navigator.sendBeacon('/api/conversion', blob);
-      }catch(e){}
-      return fetch('/api/conversion', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const whatsappBtn = document.getElementById('whatsapp-link');
+    document.addEventListener("DOMContentLoaded", () => {
+      const whatsappBtn = document.getElementById("whatsapp-link");
       if (!whatsappBtn) return;
 
-      whatsappBtn.addEventListener('click', () => {
-        // Evento para medir CPC del botón
-        const clickId = 'btn_click_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-        if (typeof fbq !== 'undefined') {
-          fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: clickId });
-        }
-        sendCapi({
-          event_name: 'ButtonClick',
-          event_id: clickId,
-          action_source: 'website',
-          event_source_url: document.referrer || window.location.href,
-          custom_data: { button: 'whatsapp' }
-        });
+      whatsappBtn.addEventListener("click", () => {
+        const eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
-        // También mandamos Lead (opcional)
-        const leadId = 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-        if (typeof fbq !== 'undefined') {
-          fbq('track', 'Lead', {}, { eventID: leadId });
+        // Pixel - Evento para CPC y Lead
+        if (typeof fbq !== "undefined") {
+          fbq('trackCustom', 'ButtonClick', {button: 'whatsapp'}, {eventID: eventId});
+          fbq('track', 'Lead', {}, {eventID: eventId});
         }
-        sendCapi({
-          event_name: 'Lead',
-          event_id: leadId,
-          action_source: 'website',
-          event_source_url: document.referrer || window.location.href
-        });
+
+        // CAPI
+        fetch('/api/conversion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event_name: 'Lead',
+            event_id: eventId,
+            event_source_url: window.location.href,
+            custom_data: {
+              value: 3000,
+              currency: "ARS",
+              button: "whatsapp"
+            }
+          })
+        }).then(r => console.log("Evento enviado a CAPI"))
+          .catch(err => console.error("Error CAPI:", err));
       });
-
-      // Simulación de notificaciones
-      const notifRoot = document.getElementById('notificaciones-falsas');
-      const msgs = [
-        'Nadia (CABA) obtuvo un bono de bienvenida',
-        'Lucas (Córdoba) solicitó un retiro',
-        'Carla (Rosario) está jugando ahora'
-      ];
-      setInterval(() => {
-        if (!notifRoot) return;
-        const el = document.createElement('div');
-        el.className = 'notificacion';
-        el.textContent = msgs[Math.floor(Math.random()*msgs.length)];
-        notifRoot.appendChild(el);
-        setTimeout(() => el.remove(), 6500);
-      }, 7000);
     });
   </script>
 </body>
