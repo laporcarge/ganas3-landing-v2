@@ -5,6 +5,10 @@ export default async function handler(req, res) {
 
   try {
     const accessToken = process.env.CAPI_TOKEN; // Vercel → Settings → Environment Variables
+    if (!accessToken) {
+      return res.status(500).json({ error: 'Falta CAPI_TOKEN en variables de entorno' });
+    }
+
     const pixelId = '747470498138166';
 
     const {
@@ -12,12 +16,12 @@ export default async function handler(req, res) {
       event_id,
       event_source_url,
       custom_data,
-      fbp,                // opcional: cookie _fbp (si viene del front)
-      fbc,                // opcional: cookie _fbc (o fbclid)
-      test_event_code     // opcional: para "Probar eventos"
-    } = req.body;
+      fbp, // opcional
+      fbc, // opcional
+      test_event_code // opcional
+    } = req.body || {};
 
-    // Datos mínimos de coincidencia (matching)
+    // Datos mínimos de matching
     const client_ip_address =
       (req.headers['x-forwarded-for'] || '').split(',')[0]?.trim() ||
       req.socket?.remoteAddress ||
@@ -43,13 +47,17 @@ export default async function handler(req, res) {
 
     if (test_event_code) payload.test_event_code = test_event_code;
 
-    const r = await fetch(
+    const fbRes = await fetch(
       `https://graph.facebook.com/v20.0/${pixelId}/events?access_token=${accessToken}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
     );
 
-    const data = await r.json();
-    return res.status(200).json(data);
+    const text = await fbRes.text();
+    let json;
+    try { json = JSON.parse(text); } catch { json = { raw: text }; }
+
+    // Propaga el status real que devuelve Meta (200/400/401/etc.)
+    return res.status(fbRes.status).json(json);
 
   } catch (e) {
     console.error('Error CAPI:', e);
