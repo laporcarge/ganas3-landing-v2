@@ -3,52 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ganamos.co ¡Gana y Disfruta!</title>
+  <title>Ganamos.co - ¡Gana y Disfruta!</title>
+
+  <!-- Fuente -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="estilo.css" />
 
   <!-- Meta Pixel -->
   <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '747470498138166');
     fbq('track', 'PageView');
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
-  </noscript>
-
-  <link rel="stylesheet" href="estilo.css" />
 </head>
+
 <body>
-  <header>
-    <h1>¡Bienvenido a Ganamos.co!</h1>
-    <p>Ganá y disfrutá al máximo.</p>
+  <header class="hero">
+    <div class="hero__textos">
+      <h1 class="titulo">¡Bienvenido a <span>Ganamos.co</span>!</h1>
+      <p class="subtitulo">Ganá y disfrutá al máximo.</p>
+    </div>
+
+    <a id="contactBtn" class="btn" target="_blank" rel="noopener"
+       href="https://api.whatsapp.com/send?phone=5493518761399&text=¡Hola!%20Quiero%20más%20info">
+      ¡Contactanos por WhatsApp!
+    </a>
   </header>
 
-  <main>
-    <button id="contactBtn" class="btn-contactar">¡Contactanos por WhatsApp!</button>
-  </main>
-
   <script>
-    document.getElementById('contactBtn').addEventListener('click', function() {
-      // Dispara evento en Meta Pixel
-      fbq('track', 'Contact');
+    // API siempre a tu dominio (evita api.whatsapp.com)
+    const API_URL = location.origin + '/api/conversion';
+    const TEST_EVENT_CODE = ""; // ej: "TEST64631" solo para "Probar eventos"
 
-      // Llama a tu API para CAPI
-      fetch('/api/conversion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event_name: 'Contact' })
-      });
+    // Helpers fbp/fbc (coincidencias avanzadas)
+    function getCookie(name){
+      const m = document.cookie.match('(?:^|; )' + name.replace(/([.$?*|{}()\\[\\]\\\\/+^])/g,'\\$1') + '=([^;]*)');
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+    function getFbc(){
+      const url = new URL(location.href);
+      const fbclid = url.searchParams.get('fbclid');
+      if (!fbclid) return getCookie('_fbc');
+      const ts = Math.floor(Date.now()/1000);
+      return `fb.1.${ts}.${fbclid}`;
+    }
+    function sendCapi(payload){
+      const withIds = {
+        ...payload,
+        fbp: getCookie('_fbp') || undefined,
+        fbc: getFbc() || undefined,
+        ...(TEST_EVENT_CODE ? { test_event_code: TEST_EVENT_CODE } : {})
+      };
+      try{
+        const body = JSON.stringify(withIds);
+        if (navigator.sendBeacon) {
+          const blob = new Blob([body], { type: 'application/json' });
+          if (navigator.sendBeacon(API_URL, blob)) return;
+        }
+      }catch(_){}
+      fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(withIds) })
+        .catch(()=>{});
+    }
 
-      // Redirección al WhatsApp
-      window.location.href = 'https://api.whatsapp.com/send?phone=5493518761399&text=¡Hola!%20Quiero%20más%20info';
+    // Click del botón: Pixel + CAPI + redirección
+    document.getElementById('contactBtn').addEventListener('click', () => {
+      const eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+
+      // Pixel (navegador)
+      if (typeof fbq !== 'undefined') {
+        fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
+        fbq('track', 'Lead', {}, { eventID: eventId });
+      }
+
+      // CAPI (servidor)
+      const common = { event_id: eventId, event_source_url: location.href };
+      sendCapi({ event_name:'Lead',        ...common, custom_data:{ value:3000, currency:'ARS', button:'whatsapp' } });
+      sendCapi({ event_name:'ButtonClick', ...common, custom_data:{ button:'whatsapp' } });
+      // La redirección la hace el <a> con href
     });
   </script>
 </body>
