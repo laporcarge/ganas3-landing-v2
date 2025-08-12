@@ -39,50 +39,68 @@
   </div>
 
   <script>
-    // (OPCIONAL) pegá acá tu Test Event Code para ver "Recibido del servidor" en Probar eventos
-    const TEST_EVENT_CODE = ""; // ej: "TEST12345" (dejalo vacío para producción)
+    // Pega tu Test Event Code de "Probar eventos" si querés ver el server-event en tiempo real.
+    const TEST_EVENT_CODE = ""; // ej: "TEST64631" (dejalo vacío para producción)
 
-    // Utilidad confiable (intenta sendBeacon y si no, fetch)
-    function sendCapi(payload){
-      try{
-        const body = JSON.stringify(payload);
-        if (navigator.sendBeacon) {
-          const blob = new Blob([body], { type: 'application/json' });
-          if (navigator.sendBeacon('/api/conversion', blob)) return;
-        }
-      }catch(_e){}
-      fetch('/api/conversion', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
-      .catch(()=>{});
+    // API absoluta a tu dominio (evita postear por error a api.whatsapp.com)
+    const API_URL = location.origin + '/api/conversion';
+
+    // Helpers de cookies fbp/fbc
+    function getCookie(name){
+      const m = document.cookie.match('(?:^|; )' + name.replace(/([.$?*|{}()\\[\\]\\\\/+^])/g, '\\$1') + '=([^;]*)');
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+    function getFbc(){
+      const url = new URL(location.href);
+      const fbclid = url.searchParams.get('fbclid');
+      if (!fbclid) return getCookie('_fbc');
+      const ts = Math.floor(Date.now()/1000);
+      return `fb.1.${ts}.${fbclid}`;
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const whatsappBtn = document.getElementById("whatsapp-link");
+    function sendCapi(payload){
+      const withIds = {
+        ...payload,
+        fbp: getCookie('_fbp') || undefined,
+        fbc: getFbc() || undefined
+      };
+
+      try{
+        const body = JSON.stringify(withIds);
+        if (navigator.sendBeacon) {
+          const blob = new Blob([body], { type: 'application/json' });
+          if (navigator.sendBeacon(API_URL, blob)) return;
+        }
+      }catch(_){}
+      fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(withIds) })
+        .catch(()=>{});
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const whatsappBtn = document.getElementById('whatsapp-link');
       if (!whatsappBtn) return;
 
-      whatsappBtn.addEventListener("click", () => {
-        // 1) Genero event_id y lo uso en Pixel y CAPI para deduplicar
+      whatsappBtn.addEventListener('click', () => {
         const eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
-        // 2) PIXEL: ButtonClick (para CPC) + Lead (con el mismo eventID)
-        if (typeof fbq !== "undefined") {
+        // Pixel (navegador)
+        if (typeof fbq !== 'undefined') {
           fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
           fbq('track', 'Lead', {}, { eventID: eventId });
         }
 
-        // 3A) CAPI: Lead (server)
+        // CAPI (servidor)
         sendCapi({
           event_name: 'Lead',
           event_id: eventId,
-          event_source_url: window.location.href,
+          event_source_url: location.href,
           custom_data: { value: 3000, currency: 'ARS', button: 'whatsapp' },
           test_event_code: TEST_EVENT_CODE || undefined
         });
-
-        // 3B) CAPI: ButtonClick (server) — mejora atribución del CPC del botón
         sendCapi({
           event_name: 'ButtonClick',
           event_id: eventId,
-          event_source_url: window.location.href,
+          event_source_url: location.href,
           custom_data: { button: 'whatsapp' },
           test_event_code: TEST_EVENT_CODE || undefined
         });
