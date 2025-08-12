@@ -14,6 +14,10 @@
     fbq('init', '747470498138166');
     fbq('track', 'PageView');
   </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" alt=""
+         src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
+  </noscript>
 
   <style>
     body{background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;font-family:'Poppins',sans-serif}
@@ -32,80 +36,20 @@
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
     <p class="highlight">🎰 +2000 tragamonedas | ✨ Retiros sin límite | 🍱 Bonos exclusivos</p>
 
-    <a id="whatsapp-link" class="boton-wsp" target="_blank" rel="noopener noreferrer"
+    <!-- Importante: sin target="_blank". La apertura se hace desde JS luego del delay -->
+    <a id="whatsapp-link" class="boton-wsp"
        href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
       👉 Consultá tu beneficio ahora por WhatsApp
     </a>
   </div>
 
   <script>
-    // Pega tu Test Event Code de "Probar eventos" si querés ver el server-event en tiempo real.
-    const TEST_EVENT_CODE = ""; // ej: "TEST64631" (dejalo vacío para producción)
+    // (Opcional para pruebas en tiempo real) Pega aquí tu Test Event Code de "Probar eventos"
+    const TEST_EVENT_CODE = ""; // ej: "TEST12345" (déjalo vacío en producción)
 
     // API absoluta a tu dominio (evita postear por error a api.whatsapp.com)
     const API_URL = location.origin + '/api/conversion';
 
     // Helpers de cookies fbp/fbc
     function getCookie(name){
-      const m = document.cookie.match('(?:^|; )' + name.replace(/([.$?*|{}()\\[\\]\\\\/+^])/g, '\\$1') + '=([^;]*)');
-      return m ? decodeURIComponent(m[1]) : null;
-    }
-    function getFbc(){
-      const url = new URL(location.href);
-      const fbclid = url.searchParams.get('fbclid');
-      if (!fbclid) return getCookie('_fbc');
-      const ts = Math.floor(Date.now()/1000);
-      return `fb.1.${ts}.${fbclid}`;
-    }
-
-    function sendCapi(payload){
-      const withIds = {
-        ...payload,
-        fbp: getCookie('_fbp') || undefined,
-        fbc: getFbc() || undefined
-      };
-
-      try{
-        const body = JSON.stringify(withIds);
-        if (navigator.sendBeacon) {
-          const blob = new Blob([body], { type: 'application/json' });
-          if (navigator.sendBeacon(API_URL, blob)) return;
-        }
-      }catch(_){}
-      fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(withIds) })
-        .catch(()=>{});
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const whatsappBtn = document.getElementById('whatsapp-link');
-      if (!whatsappBtn) return;
-
-      whatsappBtn.addEventListener('click', () => {
-        const eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-
-        // Pixel (navegador)
-        if (typeof fbq !== 'undefined') {
-          fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
-          fbq('track', 'Lead', {}, { eventID: eventId });
-        }
-
-        // CAPI (servidor)
-        sendCapi({
-          event_name: 'Lead',
-          event_id: eventId,
-          event_source_url: location.href,
-          custom_data: { value: 3000, currency: 'ARS', button: 'whatsapp' },
-          test_event_code: TEST_EVENT_CODE || undefined
-        });
-        sendCapi({
-          event_name: 'ButtonClick',
-          event_id: eventId,
-          event_source_url: location.href,
-          custom_data: { button: 'whatsapp' },
-          test_event_code: TEST_EVENT_CODE || undefined
-        });
-      });
-    });
-  </script>
-</body>
-</html> 
+      const m =
