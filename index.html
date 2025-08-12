@@ -46,7 +46,7 @@
       whatsappBtn.addEventListener("click", () => {
         const eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
-        // Pixel: ButtonClick y Lead con mismo event_id
+        // Pixel
         if (typeof fbq !== "undefined") {
           fbq('trackCustom', 'ButtonClick', {button: 'whatsapp'}, {eventID: eventId});
           fbq('track', 'Lead', {}, {eventID: eventId});
@@ -54,8 +54,7 @@
 
         // CAPI: Lead
         fetch('/api/conversion', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             event_name: 'Lead',
             event_id: eventId,
@@ -64,10 +63,9 @@
           })
         }).catch(()=>{});
 
-        // CAPI: ButtonClick (para mejor medición del CPC del botón)
+        // CAPI: ButtonClick
         fetch('/api/conversion', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             event_name: 'ButtonClick',
             event_id: eventId,
