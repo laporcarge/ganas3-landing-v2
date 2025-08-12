@@ -36,20 +36,24 @@
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
     <p class="highlight">🎰 +2000 tragamonedas | ✨ Retiros sin límite | 🍱 Bonos exclusivos</p>
 
-    <!-- Importante: sin target="_blank". La apertura se hace desde JS luego del delay -->
-    <a id="whatsapp-link" class="boton-wsp"
+    <!-- NO se toca estética ni atributos -->
+    <a id="whatsapp-link" class="boton-wsp" target="_blank" rel="noopener noreferrer"
        href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
       👉 Consultá tu beneficio ahora por WhatsApp
     </a>
   </div>
 
+  <!-- ÚNICO cambio: disparar ButtonClick al hacer click -->
   <script>
-    // (Opcional para pruebas en tiempo real) Pega aquí tu Test Event Code de "Probar eventos"
-    const TEST_EVENT_CODE = ""; // ej: "TEST12345" (déjalo vacío en producción)
-
-    // API absoluta a tu dominio (evita postear por error a api.whatsapp.com)
-    const API_URL = location.origin + '/api/conversion';
-
-    // Helpers de cookies fbp/fbc
-    function getCookie(name){
-      const m =
+    document.addEventListener('DOMContentLoaded', function () {
+      var btn = document.getElementById('whatsapp-link');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        if (typeof fbq !== 'undefined') {
+          fbq('trackCustom', 'ButtonClick', {button: 'whatsapp'});
+        }
+      });
+    });
+  </script>
+</body>
+</html>
