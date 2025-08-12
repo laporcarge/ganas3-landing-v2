@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const accessToken = process.env.CAPI_TOKEN; // ⚠️ Guardar en Variables de Entorno en Vercel
+    const accessToken = process.env.CAPI_TOKEN; // Guardar token en Variables de Entorno en Vercel
     const pixelId = '747470498138166';
 
     const {
