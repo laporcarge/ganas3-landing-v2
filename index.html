@@ -39,17 +39,42 @@
   </div>
 
   <script>
-    // Pega tu Test Event Code de "Probar eventos" si querés ver el server-event en tiempo real.
-    const TEST_EVENT_CODE = ""; // ej: "TEST64631" (dejalo vacío para producción)
-
-    // API absoluta a tu dominio (evita postear por error a api.whatsapp.com)
+    /* =======================
+       CONFIG DE PRUEBA
+       ======================= */
+    const TEST_MODE = true;            // ⚠️ CAMBIAR A false PARA PRODUCCIÓN
+    const TEST_EVENT_CODE = "";        // ej: "TEST64631" cuando uses Probar eventos
     const API_URL = location.origin + '/api/conversion';
 
-    // Helpers de cookies fbp/fbc
+    /* ========= helpers cookies fbp/fbc ========= */
+    function setCookie(name, value, seconds) {
+      const domain = location.hostname.includes('.')
+        ? '; domain=' + location.hostname.replace(/^www\./,'')
+        : '';
+      const expires = seconds ? '; max-age=' + seconds : '';
+      document.cookie = `${name}=${encodeURIComponent(value)}; path=/; samesite=Lax${domain}${expires}`;
+    }
     function getCookie(name){
       const m = document.cookie.match('(?:^|; )' + name.replace(/([.$?*|{}()\\[\\]\\\\/+^])/g, '\\$1') + '=([^;]*)');
       return m ? decodeURIComponent(m[1]) : null;
     }
+    function ensureFbpFbcForTesting(){
+      if (!TEST_MODE) return;
+      // fbp: fb.1.<ts>.<random>
+      if (!getCookie('_fbp')) {
+        const ts = Math.floor(Date.now()/1000);
+        const rnd = Math.random().toString(36).slice(2,10);
+        setCookie('_fbp', `fb.1.${ts}.${rnd}`, 90*24*60*60);
+      }
+      // fbc: fb.1.<ts>.<fbclid>  (si no hay fbclid real, generamos uno de prueba)
+      if (!getCookie('_fbc')) {
+        const ts = Math.floor(Date.now()/1000);
+        const fakeFbclid = 'TESTFBCLID' + Math.random().toString(36).slice(2,8);
+        setCookie('_fbc', `fb.1.${ts}.${fakeFbclid}`, 90*24*60*60);
+      }
+    }
+    ensureFbpFbcForTesting();
+
     function getFbc(){
       const url = new URL(location.href);
       const fbclid = url.searchParams.get('fbclid');
@@ -64,6 +89,8 @@
         fbp: getCookie('_fbp') || undefined,
         fbc: getFbc() || undefined
       };
+      // añade test_event_code cuando estés en "Probar eventos"
+      if (TEST_MODE && TEST_EVENT_CODE) withIds.test_event_code = TEST_EVENT_CODE;
 
       try{
         const body = JSON.stringify(withIds);
@@ -94,15 +121,13 @@
           event_name: 'Lead',
           event_id: eventId,
           event_source_url: location.href,
-          custom_data: { value: 3000, currency: 'ARS', button: 'whatsapp' },
-          test_event_code: TEST_EVENT_CODE || undefined
+          custom_data: { value: 3000, currency: 'ARS', button: 'whatsapp' }
         });
         sendCapi({
           event_name: 'ButtonClick',
           event_id: eventId,
           event_source_url: location.href,
-          custom_data: { button: 'whatsapp' },
-          test_event_code: TEST_EVENT_CODE || undefined
+          custom_data: { button: 'whatsapp' }
         });
       });
     });
