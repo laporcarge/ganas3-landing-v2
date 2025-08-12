@@ -4,11 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ganamos.co - ¡Gana y Disfruta!</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
-  <!-- Meta Pixel -->
+  <!-- Pixel -->
   <script>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -17,57 +14,19 @@
     fbq('init', '747470498138166');
     fbq('track', 'PageView');
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1" />
-  </noscript>
 
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-    body{background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center}
-
-    .hero{
-      width:100%;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      padding:20px;
-      background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
-        url('https://static.vecteezy.com/system/resources/previews/003/810/467/non_2x/casino-advertising-neon-banner-design-with-playing-cards-and-casino-chips-on-purple-background-vector.jpg')
-        center/cover no-repeat;
-    }
-
-    .animated-title{font-size:2.2rem;font-weight:600;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
-    .highlight{font-size:1.05rem;font-weight:400;margin:10px 0;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
-
-    .boton-wsp{
-      text-decoration:none;
-      display:inline-block;
-      background-color:#25d366;
-      color:#fff;
-      padding:14px 26px;
-      border-radius:10px;
-      font-weight:bold;
-      font-size:18px;
-      margin-top:20px;
-      box-shadow:0 4px 15px rgba(0,0,0,.5);
-      transition:transform .2s ease, background-color .3s ease;
-    }
+    body{background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;font-family:'Poppins',sans-serif}
+    .hero{width:100%;height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
+      background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url('https://static.vecteezy.com/system/resources/previews/003/810/467/non_2x/casino-advertising-neon-banner-design-with-playing-cards-and-casino-chips-on-purple-background-vector.jpg') center/cover no-repeat}
+    .animated-title{font-size:2.2rem;font-weight:700;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
+    .highlight{font-size:1.05rem;margin:10px 0;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
+    .boton-wsp{text-decoration:none;display:inline-block;background-color:#25d366;color:#fff;padding:14px 26px;border-radius:10px;font-weight:700;font-size:18px;margin-top:20px;box-shadow:0 4px 15px rgba(0,0,0,.5);transition:transform .2s,background-color .3s}
     .boton-wsp:hover{background-color:#1da851;transform:scale(1.03)}
-
-    .contador-falso{
-      position:fixed;top:10px;left:10px;
-      background:#000;color:gold;font-weight:bold;
-      padding:10px 15px;border:2px solid gold;
-      border-radius:8px;z-index:9999;font-size:14px;
-    }
   </style>
 </head>
 
 <body>
-  <div class="contador-falso">👥 Usuarios conectados: <span id="contador">124</span></div>
-
   <div class="hero">
     <h1 class="animated-title">🔥 ¡REGÍSTRATE Y COMIENZA A GANAR! 🔥</h1>
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
@@ -87,13 +46,13 @@
       whatsappBtn.addEventListener("click", () => {
         const eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
-        // Pixel - Evento para CPC y Lead
+        // Pixel: ButtonClick y Lead con mismo event_id
         if (typeof fbq !== "undefined") {
           fbq('trackCustom', 'ButtonClick', {button: 'whatsapp'}, {eventID: eventId});
           fbq('track', 'Lead', {}, {eventID: eventId});
         }
 
-        // CAPI
+        // CAPI: Lead
         fetch('/api/conversion', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -101,16 +60,21 @@
             event_name: 'Lead',
             event_id: eventId,
             event_source_url: window.location.href,
-            custom_data: {
-              value: 3000,
-              currency: "ARS",
-              button: "whatsapp"
-            }
+            custom_data: { value: 3000, currency: "ARS", button: "whatsapp" }
           })
-        }).then(r => console.log("Evento enviado a CAPI"))
-          .catch(err => console.error("Error CAPI:", err));
+        }).catch(()=>{});
+
+        // CAPI: ButtonClick (para mejor medición del CPC del botón)
+        fetch('/api/conversion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event_name: 'ButtonClick',
+            event_id: eventId,
+            event_source_url: window.location.href,
+            custom_data: { button: "whatsapp" }
+          })
+        }).catch(()=>{});
       });
     });
   </script>
-</body>
-</html>
