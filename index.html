@@ -4,116 +4,108 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ganamos.co - ¡Gana y Disfruta!</title>
-  <link rel="stylesheet" href="estilo.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
   <!-- Meta Pixel Code -->
   <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '747470498138166');
     fbq('track', 'PageView');
   </script>
   <noscript>
-    <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1" />
   </noscript>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const whatsappBtn = document.getElementById("whatsapp-link");
-
-      if (whatsappBtn) {
-        whatsappBtn.addEventListener("click", () => {
-          // Pixel Lead event
-          if (typeof fbq !== "undefined") {
-            fbq('track', 'Lead'); // ✅ CAMBIADO de 'Purchase' a 'Lead'
-          }
-
-          // CAPI Lead event
-          fetch('/api/conversion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              event_name: 'Lead', // ✅ CAMBIADO de 'Purchase' a 'Lead'
-              event_source_url: document.referrer || window.location.href
-            })
-          }).then(res => {
-            console.log("Evento Lead enviado a Meta API");
-          }).catch(err => {
-            console.error("Error enviando evento a Meta:", err);
-          });
-        });
-      }
-    });
-  </script>
-
   <style>
-    .contador-falso {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background-color: black;
-      color: gold;
-      font-weight: bold;
-      padding: 10px 15px;
-      border: 2px solid gold;
-      border-radius: 8px;
-      z-index: 9999;
-      font-size: 14px;
-      font-family: 'Arial Black', sans-serif;
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center}
+
+    .hero{
+      width:100%;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:20px;
+      background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
+        url('https://static.vecteezy.com/system/resources/previews/003/810/467/non_2x/casino-advertising-neon-banner-design-with-playing-cards-and-casino-chips-on-purple-background-vector.jpg')
+        center/cover no-repeat;
     }
 
-    .notificaciones-falsas {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      max-width: 280px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .animated-title{
+      font-size:2.2rem;
+      font-weight:600;
+      animation:fadeIn 1.5s ease-in-out;
+      text-shadow:2px 2px 5px rgba(0,0,0,.8);
+    }
+    .highlight{
+      font-size:1.05rem;
+      font-weight:400;
+      margin:10px 0;
+      text-shadow:2px 2px 5px rgba(0,0,0,.8);
     }
 
-    .notificacion {
-      background: rgba(0, 0, 0, 0.85);
-      color: gold;
-      border: 2px solid gold;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      animation: desaparecer 6s forwards;
+    .boton-wsp{
+      text-decoration:none;
+      display:inline-block;
+      background-color:#25d366;
+      color:#fff;
+      padding:14px 26px;
+      border-radius:10px;
+      font-weight:bold;
+      font-size:18px;
+      margin-top:20px;
+      box-shadow:0 4px 15px rgba(0,0,0,.5);
+      transition:transform .2s ease, background-color .3s ease;
+      animation:pulse 1.6s infinite;
+    }
+    .boton-wsp:hover{
+      background-color:#1da851;
+      transform:scale(1.03);
     }
 
-    @keyframes desaparecer {
-      0% { opacity: 1; transform: translateY(0); }
-      80% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-20px); }
+    .contador-falso{
+      position:fixed;
+      top:10px;
+      left:10px;
+      background:#000;
+      color:gold;
+      font-weight:bold;
+      padding:10px 15px;
+      border:2px solid gold;
+      border-radius:8px;
+      z-index:9999;
+      font-size:14px;
+    }
+    .notificaciones-falsas{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      max-width:280px;
+      z-index:9999;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .notificacion{
+      background:rgba(0,0,0,.85);
+      color:gold;
+      border:2px solid gold;
+      padding:10px;
+      border-radius:10px;
+      font-size:.95rem;
+      animation:desaparecer 6s forwards;
     }
 
-    .boton-wsp {
-      text-decoration: none;
-      display: inline-block;
-      background-color: #25d366;
-      color: white;
-      padding: 14px 26px;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 18px;
-      font-family: 'Inter', sans-serif;
-      margin-top: 20px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
-      transition: background-color 0.3s ease;
-    }
-
-    .boton-wsp:hover {
-      background-color: #1da851;
-    }
+    @keyframes desaparecer{0%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
   </style>
 </head>
 
@@ -126,10 +118,72 @@
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
     <p class="highlight">🎰 +2000 tragamonedas | ✨ Retiros sin límite | 🍱 Bonos exclusivos</p>
 
-    <a id="whatsapp-link" class="boton-wsp" target="_blank"
-      href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
+    <a id="whatsapp-link" class="boton-wsp" target="_blank" rel="noopener noreferrer"
+       href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
       👉 Consultá tu beneficio ahora por WhatsApp
     </a>
   </div>
+
+  <script>
+    function sendCapi(payload){
+      try{
+        const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
+        if (navigator.sendBeacon) return navigator.sendBeacon('/api/conversion', blob);
+      }catch(e){}
+      return fetch('/api/conversion', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const whatsappBtn = document.getElementById('whatsapp-link');
+      if (!whatsappBtn) return;
+
+      whatsappBtn.addEventListener('click', () => {
+        // Evento para medir CPC del botón
+        const clickId = 'btn_click_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+        if (typeof fbq !== 'undefined') {
+          fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: clickId });
+        }
+        sendCapi({
+          event_name: 'ButtonClick',
+          event_id: clickId,
+          action_source: 'website',
+          event_source_url: document.referrer || window.location.href,
+          custom_data: { button: 'whatsapp' }
+        });
+
+        // También mandamos Lead (opcional)
+        const leadId = 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'Lead', {}, { eventID: leadId });
+        }
+        sendCapi({
+          event_name: 'Lead',
+          event_id: leadId,
+          action_source: 'website',
+          event_source_url: document.referrer || window.location.href
+        });
+      });
+
+      // Simulación de notificaciones
+      const notifRoot = document.getElementById('notificaciones-falsas');
+      const msgs = [
+        'Nadia (CABA) obtuvo un bono de bienvenida',
+        'Lucas (Córdoba) solicitó un retiro',
+        'Carla (Rosario) está jugando ahora'
+      ];
+      setInterval(() => {
+        if (!notifRoot) return;
+        const el = document.createElement('div');
+        el.className = 'notificacion';
+        el.textContent = msgs[Math.floor(Math.random()*msgs.length)];
+        notifRoot.appendChild(el);
+        setTimeout(() => el.remove(), 6500);
+      }, 7000);
+    });
+  </script>
 </body>
 </html>
