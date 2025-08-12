@@ -55,4 +55,4 @@ export default async function handler(req, res) {
     console.error('Error CAPI:', e);
     return res.status(500).json({ error: 'Error al enviar evento a Meta', details: e.message });
   }
-}ESTE ES EL API
+}
