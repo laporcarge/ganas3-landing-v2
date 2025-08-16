@@ -43,55 +43,50 @@
     </a>
   </div>
 
-  <!-- Agregamos Contact (estándar) + mantenemos ButtonClick (custom) y mandamos CAPI con el mismo event_id -->
+  <!-- Pixel: ButtonClick + Contact | CAPI: Contact con el mismo event_id -->
   <script>
-    // Helpers para _fbp/_fbc
-    function getCookie(name) {
-      return ('; ' + document.cookie).split('; ' + name + '=').pop()?.split(';')[0];
-    }
-    function getParam(name) {
-      return new URLSearchParams(location.search).get(name);
-    }
+    // ===== Helpers =====
+    function getCookie(name){return(';' + document.cookie).split('; ' + name + '=').pop()?.split(';')[0]}
+    function getParam(name){return new URLSearchParams(location.search).get(name)}
+    function genEventId(){return 'contact-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)}
 
-    // eventID para deduplicación
-    function genEventId() {
-      return 'contact-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-    }
+    // Opcional: activá el test de eventos poniendo un código acá
+    const TEST_EVENT_CODE = ""; // ej: "TEST33354"
 
     document.addEventListener('DOMContentLoaded', function () {
       var btn = document.getElementById('whatsapp-link');
       if (!btn) return;
 
       btn.addEventListener('click', async function () {
+        var eventId = genEventId();
+        window.lastContactEventId = eventId;
+
+        // 1) Pixel (si existe): mantenemos ButtonClick y sumamos Contact
         if (typeof fbq !== 'undefined') {
-          var eventId = genEventId();
-          window.lastContactEventId = eventId;
-
-          // 1) Pixel: custom para la campaña vieja
           fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
-
-          // 2) Pixel: estándar para la campaña nueva
           fbq('track', 'Contact', { channel: 'whatsapp' }, { eventID: eventId });
+        }
 
-          // 3) CAPI: MISMO event_id (deduplicación)
-          try {
-            await fetch('/api/conversion', {   // 👈 tu endpoint actual
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              keepalive: true,
-              body: JSON.stringify({
-                event_name: 'Contact',
-                event_id: eventId,
-                event_source_url: location.href,
-                custom_data: { channel: 'whatsapp' },
-                fbp: getCookie('_fbp'),
-                fbc: getCookie('_fbc') || (getParam('fbclid') ? `fb.1.${Date.now()}.${getParam('fbclid')}` : undefined)
-                // test_event_code: 'TU_CODIGO_DE_TEST'
-              })
-            });
-          } catch (e) {
-            console.warn('CAPI fetch error:', e);
-          }
+        // 2) CAPI: SIEMPRE enviamos (aunque fbq no esté)
+        try {
+          const resp = await fetch('/api/conversion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            keepalive: true,
+            body: JSON.stringify({
+              event_name: 'Contact',
+              event_id: eventId,
+              event_source_url: location.href,
+              custom_data: { channel: 'whatsapp' },
+              fbp: getCookie('_fbp'),
+              fbc: getCookie('_fbc') || (getParam('fbclid') ? `fb.1.${Date.now()}.${getParam('fbclid')}` : undefined),
+              ...(TEST_EVENT_CODE ? { test_event_code: TEST_EVENT_CODE } : {})
+            })
+          });
+          const json = await resp.json();
+          console.log('CAPI status', resp.status, json);
+        } catch (e) {
+          console.warn('CAPI fetch error:', e);
         }
       });
     });
