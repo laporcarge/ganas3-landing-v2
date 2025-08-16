@@ -43,14 +43,28 @@
     </a>
   </div>
 
-  <!-- ÚNICO cambio: disparar ButtonClick al hacer click -->
+  <!-- ÚNICO cambio: agregar Contact (estándar) y mantener ButtonClick (custom) -->
   <script>
+    // Genera un eventID simple para poder deduplicar con CAPI luego
+    function genEventId() {
+      return 'contact-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       var btn = document.getElementById('whatsapp-link');
       if (!btn) return;
+
       btn.addEventListener('click', function () {
         if (typeof fbq !== 'undefined') {
-          fbq('trackCustom', 'ButtonClick', {button: 'whatsapp'});
+          var eventId = genEventId();
+          // Guardamos el eventId por si lo necesitás enviar por CAPI después
+          window.lastContactEventId = eventId;
+
+          // Se mantiene el custom para la campaña vieja
+          fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
+
+          // Se suma el estándar Contact para la campaña nueva (mejor optimización)
+          fbq('track', 'Contact', { channel: 'whatsapp' }, { eventID: eventId });
         }
       });
     });
