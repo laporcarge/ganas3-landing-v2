@@ -43,9 +43,17 @@
     </a>
   </div>
 
-  <!-- ÚNICO cambio: agregar Contact (estándar) y mantener ButtonClick (custom) -->
+  <!-- Agregamos Contact (estándar) + mantenemos ButtonClick (custom) y mandamos CAPI con el mismo event_id -->
   <script>
-    // Genera un eventID simple para poder deduplicar con CAPI luego
+    // Helpers para _fbp/_fbc (opcional, pero suma para matching)
+    function getCookie(name) {
+      return ('; ' + document.cookie).split('; ' + name + '=').pop()?.split(';')[0];
+    }
+    function getParam(name) {
+      return new URLSearchParams(location.search).get(name);
+    }
+
+    // eventID para deduplicación
     function genEventId() {
       return 'contact-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
     }
@@ -54,17 +62,37 @@
       var btn = document.getElementById('whatsapp-link');
       if (!btn) return;
 
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', async function () {
         if (typeof fbq !== 'undefined') {
           var eventId = genEventId();
-          // Guardamos el eventId por si lo necesitás enviar por CAPI después
-          window.lastContactEventId = eventId;
+          window.lastContactEventId = eventId; // por si querés inspeccionarlo
 
-          // Se mantiene el custom para la campaña vieja
+          // 1) Pixel: mantenemos el custom para la campaña vieja
           fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
 
-          // Se suma el estándar Contact para la campaña nueva (mejor optimización)
+          // 2) Pixel: sumamos Contact (evento estándar) para la campaña nueva
           fbq('track', 'Contact', { channel: 'whatsapp' }, { eventID: eventId });
+
+          // 3) CAPI: enviamos el mismo Contact con el MISMO event_id (deduplicación)
+          try {
+            await fetch('/api/meta-capi', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              keepalive: true, // ayuda si el usuario salta de página rápido
+              body: JSON.stringify({
+                event_name: 'Contact',
+                event_id: eventId,
+                event_source_url: location.href,
+                custom_data: { channel: 'whatsapp' },
+                fbp: getCookie('_fbp'),
+                // _fbc desde cookie o armado con fbclid de la URL
+                fbc: getCookie('_fbc') || (getParam('fbclid') ? `fb.1.${Date.now()}.${getParam('fbclid')}` : undefined)
+                // test_event_code: 'TU_CODIGO_DE_TEST' // descomentá para "Probar eventos"
+              })
+            });
+          } catch (e) {
+            console.warn('CAPI fetch error:', e);
+          }
         }
       });
     });
