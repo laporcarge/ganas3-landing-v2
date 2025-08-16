@@ -36,7 +36,6 @@
     <p class="highlight">Carga mínima: <strong>$3000</strong></p>
     <p class="highlight">🎰 +2000 tragamonedas | ✨ Retiros sin límite | 🍱 Bonos exclusivos</p>
 
-    <!-- NO se toca estética ni atributos -->
     <a id="whatsapp-link" class="boton-wsp" target="_blank" rel="noopener noreferrer"
        href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
       👉 Consultá tu beneficio ahora por WhatsApp
@@ -45,29 +44,30 @@
 
   <!-- Pixel: ButtonClick + Contact | CAPI: Contact con el mismo event_id -->
   <script>
-    // ===== Helpers =====
+    // Helpers
     function getCookie(name){return(';' + document.cookie).split('; ' + name + '=').pop()?.split(';')[0]}
     function getParam(name){return new URLSearchParams(location.search).get(name)}
     function genEventId(){return 'contact-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)}
 
-    // Opcional: activá el test de eventos poniendo un código acá
-    const TEST_EVENT_CODE = ""; // ej: "TEST33354"
+    // Opcional: código de prueba de eventos de Meta
+    const TEST_EVENT_CODE = ""; // ej "TEST33354"
 
     document.addEventListener('DOMContentLoaded', function () {
       var btn = document.getElementById('whatsapp-link');
       if (!btn) return;
 
       btn.addEventListener('click', async function () {
+        // Generamos SIEMPRE el mismo eventId para Pixel y CAPI
         var eventId = genEventId();
         window.lastContactEventId = eventId;
 
-        // 1) Pixel (si existe): mantenemos ButtonClick y sumamos Contact
+        // 1) Pixel (si está disponible)
         if (typeof fbq !== 'undefined') {
           fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
           fbq('track', 'Contact', { channel: 'whatsapp' }, { eventID: eventId });
         }
 
-        // 2) CAPI: SIEMPRE enviamos (aunque fbq no esté)
+        // 2) CAPI (siempre)
         try {
           const resp = await fetch('/api/conversion', {
             method: 'POST',
