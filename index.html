@@ -45,7 +45,7 @@
 
   <!-- Agregamos Contact (estándar) + mantenemos ButtonClick (custom) y mandamos CAPI con el mismo event_id -->
   <script>
-    // Helpers para _fbp/_fbc (opcional, pero suma para matching)
+    // Helpers para _fbp/_fbc
     function getCookie(name) {
       return ('; ' + document.cookie).split('; ' + name + '=').pop()?.split(';')[0];
     }
@@ -65,29 +65,28 @@
       btn.addEventListener('click', async function () {
         if (typeof fbq !== 'undefined') {
           var eventId = genEventId();
-          window.lastContactEventId = eventId; // por si querés inspeccionarlo
+          window.lastContactEventId = eventId;
 
-          // 1) Pixel: mantenemos el custom para la campaña vieja
+          // 1) Pixel: custom para la campaña vieja
           fbq('trackCustom', 'ButtonClick', { button: 'whatsapp' }, { eventID: eventId });
 
-          // 2) Pixel: sumamos Contact (evento estándar) para la campaña nueva
+          // 2) Pixel: estándar para la campaña nueva
           fbq('track', 'Contact', { channel: 'whatsapp' }, { eventID: eventId });
 
-          // 3) CAPI: enviamos el mismo Contact con el MISMO event_id (deduplicación)
+          // 3) CAPI: MISMO event_id (deduplicación)
           try {
-            await fetch('/api/meta-capi', {
+            await fetch('/api/conversion', {   // 👈 tu endpoint actual
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              keepalive: true, // ayuda si el usuario salta de página rápido
+              keepalive: true,
               body: JSON.stringify({
                 event_name: 'Contact',
                 event_id: eventId,
                 event_source_url: location.href,
                 custom_data: { channel: 'whatsapp' },
                 fbp: getCookie('_fbp'),
-                // _fbc desde cookie o armado con fbclid de la URL
                 fbc: getCookie('_fbc') || (getParam('fbclid') ? `fb.1.${Date.now()}.${getParam('fbclid')}` : undefined)
-                // test_event_code: 'TU_CODIGO_DE_TEST' // descomentá para "Probar eventos"
+                // test_event_code: 'TU_CODIGO_DE_TEST'
               })
             });
           } catch (e) {
