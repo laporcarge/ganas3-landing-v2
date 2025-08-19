@@ -2,105 +2,192 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ganamos.co - ¡Gana y Disfruta!</title>
-  <meta name="description" content="Consultá tu beneficio por WhatsApp y comenzá hoy. Atención rápida y soporte personalizado."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ganamos</title>
 
-  <!-- Meta Pixel -->
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Ícono -->
+  <link rel="shortcut icon" href="img/logo%20casss.png" type="image/x-icon" />
+
+  <!-- Meta Pixel Code -->
   <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){
-      n.callMethod? n.callMethod.apply(n,arguments) : n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;
-      s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)
-    }(window, document, 'script', 'https://connect.facebook.net/es_LA/fbevents.js');
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){
+        n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];
+      t=b.createElement(e);t.async=!0;
+      t.src=v;
+      s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    }(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '747470498138166'); 
+    fbq('init', '747470498138166');   // <-- tu Pixel
     fbq('track', 'PageView');
   </script>
   <noscript>
-    <img height="1" width="1" style="display:none" alt=""
-         src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
   </noscript>
 
   <style>
-    body{
-      margin:0;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;
-      min-height:100svh;text-align:center;font-family:'Poppins',sans-serif
+    * {
+      box-sizing: border-box;
     }
-    .hero{
-      width:100%;min-height:100svh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
-      background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
-        url('https://static.vecteezy.com/system/resources/previews/003/810/467/non_2x/casino-advertising-neon-banner-design-with-playing-cards-and-casino-chips-on-purple-background-vector.jpg') center/cover no-repeat
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      color: white;
+      background: url("img/fondo-2.avif") no-repeat center center fixed;
+      background-size: cover;
+      text-align: center;
     }
-    h1{margin:0 0 10px;font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:700;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
-    .highlight{font-size:clamp(1rem,2.4vw,1.15rem);margin:6px 0 0;text-shadow:2px 2px 5px rgba(0,0,0,.8)}
-    .boton-wsp{
-      text-decoration:none;display:inline-block;background-color:#25d366;color:#fff;padding:14px 26px;border-radius:10px;
-      font-weight:700;font-size:18px;margin-top:18px;box-shadow:0 4px 15px rgba(0,0,0,.5);transition:transform .2s,background-color .3s
+
+    .logo img {
+      margin-top: 40px;
+      width: 230px;
     }
-    .boton-wsp:hover{background-color:#1da851;transform:scale(1.03)}
+
+    .main-title {
+      margin: 30px 0;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .main-title p {
+      font-size: 36px;
+      margin: 10px 0;
+      text-shadow: 0px 0px 8px rgba(0,0,0,0.6);
+    }
+
+    .wsp {
+      margin: 40px 0;
+    }
+
+    .go {
+      padding: 0.9em 2em;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      background-color: #25D366;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .go:hover {
+      transform: scale(1.05);
+      background-color: #1ebc5a;
+    }
+
+    .go img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .info-box {
+      margin-bottom: 60px;
+    }
+
+    .info-box p, .info-box h3 {
+      margin: 12px 0;
+      text-shadow: 0px 0px 6px rgba(0,0,0,0.5);
+    }
   </style>
 </head>
-
 <body>
-  <div class="hero">
-    <h1>🔥 ¡REGISTRATE Y EMPEZÁ HOY! 🔥</h1>
-    <p class="highlight">Carga mínima: <strong>$3000</strong></p>
-    <p class="highlight">🎰 +2000 opciones | ✨ Retiros rápidos | 🎁 Beneficios exclusivos</p>
 
-    <a id="whatsapp-link" class="boton-wsp" target="_blank" rel="noopener noreferrer"
-       href="https://wa.me/5493518761399?text=Hola%2C%20quiero%20crear%20un%20usuario!%20Mi%20nombre%20es">
-      👉 Consultá tu beneficio por WhatsApp
-    </a>
+  <div class="logo">
+    <img src="img/logo%20casss.png" alt="Logo" />
+  </div>
+
+  <div class="main-title">
+    <p>HACÉ CLICK EN CONTACTARSE</p>
+    <p>Y COMENZÁ A GANAR</p>
+  </div>
+
+  <div class="wsp">
+    <button class="go" id="btn">
+      CONTACTARSE
+      <img src="img/whatsapp.png" alt="W" />
+    </button>
+  </div>
+
+  <div class="info-box">
+    <p>Mínimo de carga: $2.000</p>
+    <h3>SEGURIDAD EN CADA JUGADA<br/>PAGOS TOTALES<br/>Y MUCHO MÁS</h3>
+  </div>
+
+  <!-- Contador de usuarios falsos -->
+  <div id="contador-falso" style="position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 12px 18px; border-radius: 10px; font-size: 16px; z-index: 9999;">
+    Usuarios conectados: <span id="usuarios-numero"></span>
+  </div>
+
+  <!-- Notificaciones de premios -->
+  <div id="notificacion-premio" style="position: fixed; top: 20px; right: 20px; background: #1ebc5a; color: white; padding: 14px 20px; border-radius: 12px; font-weight: bold; font-size: 15px; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+    🎉 ¡Alguien acaba de ganar $25.000!
   </div>
 
   <script>
-    // Helpers
-    function getCookie(name){return(';' + document.cookie).split('; ' + name + '=').pop()?.split(';')[0]}
-    function getParam(name){return new URLSearchParams(location.search).get(name)}
-    function genEventId(){return 'contact-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)}
+    document.addEventListener("DOMContentLoaded", function () {
+      const trigger = document.getElementById("btn");
+      if (trigger) {
+        trigger.addEventListener("click", function () {
+          if (typeof fbq !== 'undefined') {
+            fbq('track', 'Contact');
+          }
+          // WhatsApp: +54 9 3518 76-1399 con texto "Hola, quiero crear un usuario! Mi nombre es"
+          const encoded = "aHR0cHM6Ly93YS5tZS81NDkzNTE4NzYxMzk5P3RleHQ9SG9sYSUyQyUyMHF1aWVybyUyMGNyZWFyJTIwdW4lMjB1c3VhcmlvJTIxJTIwTWklMjBub21icmUlMjBlcw==";
+          window.open(atob(encoded), "_blank");
+        });
+      }
 
-    // Opcional: código de prueba de eventos de Meta
-    const TEST_EVENT_CODE = ""; // p.ej. "TEST33354"
+      // Contador de usuarios falsos
+      const minUsuarios = 78;
+      const maxUsuarios = 132;
+      const usuariosElemento = document.getElementById("usuarios-numero");
 
-    function sendCAPI(payload){
-      try{
-        const data = new Blob([JSON.stringify(payload)], { type:'application/json' });
-        const ok = navigator.sendBeacon && navigator.sendBeacon('/api/conversion', data);
-        if(!ok){
-          fetch('/api/conversion', {
-            method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true, body: JSON.stringify(payload)
-          }).catch(()=>{});
-        }
-      }catch(e){}
-    }
+      function actualizarUsuarios() {
+        const num = Math.floor(Math.random() * (maxUsuarios - minUsuarios + 1)) + minUsuarios;
+        usuariosElemento.textContent = num;
+      }
 
-    document.addEventListener('DOMContentLoaded', function(){
-      var btn = document.getElementById('whatsapp-link');
-      if(!btn) return;
+      setInterval(actualizarUsuarios, 3000);
+      actualizarUsuarios();
 
-      btn.addEventListener('click', function(){
-        var eventId = genEventId();
+      // Notificaciones falsas de premios
+      const noti = document.getElementById("notificacion-premio");
+      const mensajes = [
+        "🎉 ¡Alguien ganó $25.000!",
+        "🎁 ¡Premio liberado de $10.000!",
+        "💸 ¡Jugador cobró $18.500!",
+        "🔥 ¡Ganancia de $32.000 confirmada!",
+        "🎊 ¡Nuevo ganador en Córdoba!",
+        "✅ ¡Transferencia enviada al instante!"
+      ];
 
-        // Solo Contact
-        if(typeof fbq !== 'undefined'){
-          fbq('track','Contact',{ channel:'whatsapp' },{ eventID:eventId });
-        }
+      function mostrarNoti() {
+        noti.textContent = mensajes[Math.floor(Math.random() * mensajes.length)];
+        noti.style.display = "block";
+        setTimeout(() => { noti.style.display = "none"; }, 4200);
+      }
 
-        // CAPI con mismo event_id
-        const payload = {
-          event_name: 'Contact',
-          event_id: eventId,
-          event_source_url: location.href,
-          custom_data: { channel: 'whatsapp' },
-          fbp: getCookie('_fbp'),
-          fbc: getCookie('_fbc') || (getParam('fbclid') ? `fb.1.${Date.now()}.${getParam('fbclid')}` : undefined),
-          ...(TEST_EVENT_CODE ? { test_event_code: TEST_EVENT_CODE } : {})
-        };
-        sendCAPI(payload);
-      });
+      setInterval(mostrarNoti, 9000);
     });
   </script>
+
 </body>
 </html>
