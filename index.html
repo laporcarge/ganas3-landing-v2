@@ -8,7 +8,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet" />
 
   <!-- Ícono -->
   <link rel="shortcut icon" href="img/logo%20casss.png" type="image/x-icon" />
@@ -37,74 +37,134 @@
     src="https://www.facebook.com/tr?id=747470498138166&ev=PageView&noscript=1"/>
   </noscript>
 
+  <!-- CSS -->
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
+    :root{
+      --wsp:#25D366;
+      --wsp-hover:#1ebc5a;
+      --text-shadow: 0 0 8px rgba(0,0,0,.6);
+    }
+
+    html, body {
+      height: 100%;
+    }
+
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      color: white;
-      background: url("img/fondo-2.avif") no-repeat center center fixed;
-      background-size: cover;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      /* 👇 Fondo morado casino con overlay oscuro */
+      background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)),
+                  url('https://static.vecteezy.com/system/resources/previews/003/810/467/non_2x/casino-advertising-neon-banner-design-with-playing-cards-and-casino-chips-on-purple-background-vector.jpg')
+                  center/cover no-repeat fixed;
       text-align: center;
     }
 
+    /* Logo */
     .logo img {
       margin-top: 40px;
       width: 230px;
+      max-width: 60vw;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,.35));
     }
 
+    /* Título principal */
     .main-title {
       margin: 30px 0;
       font-family: 'Bebas Neue', sans-serif;
+      animation: fadeIn .9s ease both;
     }
-
     .main-title p {
-      font-size: 36px;
+      font-size: clamp(26px, 4vw, 36px);
       margin: 10px 0;
-      text-shadow: 0px 0px 8px rgba(0,0,0,0.6);
+      text-shadow: var(--text-shadow);
+      letter-spacing: .5px;
     }
 
-    .wsp {
-      margin: 40px 0;
-    }
+    /* Botón WhatsApp */
+    .wsp { margin: 40px 0; }
 
     .go {
       padding: 0.9em 2em;
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
-      background-color: #25D366;
+      font-size: clamp(22px, 3vw, 28px);
+      background-color: var(--wsp);
       border: none;
       border-radius: 12px;
-      color: white;
+      color: #fff;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      transition: transform 0.2s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+      transition: transform .2s ease, filter .2s ease, background-color .2s ease;
+      will-change: transform;
     }
-
-    .go:hover {
-      transform: scale(1.05);
-      background-color: #1ebc5a;
+    .go:hover { transform: scale(1.05); background-color: var(--wsp-hover); }
+    .go:active { transform: scale(.98); }
+    .go:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
     }
+    .go img { width: 28px; height: 28px; }
 
-    .go img {
-      width: 28px;
-      height: 28px;
-    }
-
-    .info-box {
-      margin-bottom: 60px;
-    }
-
+    /* Caja de info */
+    .info-box { margin-bottom: 60px; }
     .info-box p, .info-box h3 {
       margin: 12px 0;
-      text-shadow: 0px 0px 6px rgba(0,0,0,0.5);
+      text-shadow: 0 0 6px rgba(0,0,0,.5);
+    }
+    .info-box p { opacity: .95; }
+
+    /* Contador y notificaciones */
+    #contador-falso{
+      position: fixed;
+      bottom: 20px; left: 20px;
+      background: rgba(0,0,0,.7);
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 16px;
+      z-index: 9999;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+      backdrop-filter: blur(3px);
+    }
+
+    #notificacion-premio{
+      position: fixed;
+      top: 20px; right: 20px;
+      background: var(--wsp-hover);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      display: none;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      animation: fadeIn .35s ease both;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive pequeños */
+    @media (max-width: 420px){
+      #contador-falso{
+        left: 12px; right: 12px; bottom: 12px;
+        text-align: center;
+      }
+      #notificacion-premio{
+        right: 12px; left: 12px;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -132,12 +192,12 @@
   </div>
 
   <!-- Contador de usuarios falsos -->
-  <div id="contador-falso" style="position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 12px 18px; border-radius: 10px; font-size: 16px; z-index: 9999;">
+  <div id="contador-falso">
     Usuarios conectados: <span id="usuarios-numero"></span>
   </div>
 
   <!-- Notificaciones de premios -->
-  <div id="notificacion-premio" style="position: fixed; top: 20px; right: 20px; background: #1ebc5a; color: white; padding: 14px 20px; border-radius: 12px; font-weight: bold; font-size: 15px; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+  <div id="notificacion-premio">
     🎉 ¡Alguien acaba de ganar $25.000!
   </div>
 
@@ -149,7 +209,7 @@
           if (typeof fbq !== 'undefined') {
             fbq('track', 'Contact');
           }
-          // WhatsApp: +54 9 3518 76-1399 con texto "Hola, quiero crear un usuario! Mi nombre es"
+          // WhatsApp: +54 9 3518 76-1399 con texto
           const encoded = "aHR0cHM6Ly93YS5tZS81NDkzNTE4NzYxMzk5P3RleHQ9SG9sYSUyQyUyMHF1aWVybyUyMGNyZWFyJTIwdW4lMjB1c3VhcmlvJTIxJTIwTWklMjBub21icmUlMjBlcw==";
           window.open(atob(encoded), "_blank");
         });
