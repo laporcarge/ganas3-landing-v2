@@ -1,24 +1,42 @@
+// /pages/api/conversion.js
+// Env requeridas (Vercel):
+// - META_PIXEL_ID=747470498138166
+// - CAPI_TOKEN=EAAB....
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
+    return res.status(405).json({ ok: false, error: 'Método no permitido' });
   }
 
   try {
-    const accessToken = process.env.CAPI_TOKEN; // Vercel → Settings → Environment Variables
-    const pixelId = '747470498138166';
-    if (!accessToken) {
-      return res.status(500).json({ error: 'Falta CAPI_TOKEN en variables de entorno' });
+    const accessToken = process.env.CAPI_TOKEN;
+    const pixelId = process.env.META_PIXEL_ID;
+
+    if (!accessToken || !pixelId) {
+      return res.status(500).json({
+        ok: false,
+        error: 'Server misconfigured: faltan META_PIXEL_ID o CAPI_TOKEN en variables de entorno'
+      });
     }
 
     const {
-      event_name = 'Contact',  // 👈 default optimizado
-      event_id,                // 👈 mismo que usa el Pixel
+      event_name = 'Contact',      // estándar
+      event_id,                    // DEBE venir del front (mismo que Pixel)
       event_source_url,
-      custom_data,
-      fbp,                     // opcional: cookie _fbp
-      fbc,                     // opcional: cookie _fbc o fbclid
-      test_event_code          // opcional: para "Probar eventos"
+      custom_data = {},
+      fbp,                         // opcional
+      fbc,                         // opcional
+      test_event_code              // opcional
     } = req.body || {};
+
+    // Validaciones mínimas
+    if (!event_name) {
+      return res.status(400).json({ ok: false, error: 'Falta event_name' });
+    }
+    if (!event_id) {
+      // No generamos uno: sin esto no hay deduplicación con el Pixel
+      return res.status(400).json({ ok: false, error: 'Falta event_id (debe coincidir con el del Pixel)' });
+    }
 
     // Señales de coincidencia mínimas (matching)
     const client_ip_address =
@@ -30,7 +48,7 @@ export default async function handler(req, res) {
       data: [{
         event_name,
         event_time: Math.floor(Date.now() / 1000),
-        event_id: event_id || `evt_${Date.now()}`, // si no llega, generamos uno
+        event_id, // <-- dedupe 1:1 con Pixel
         action_source: 'website',
         event_source_url: event_source_url || req.headers.referer || '',
         user_data: {
@@ -39,26 +57,33 @@ export default async function handler(req, res) {
           ...(fbp ? { fbp } : {}),
           ...(fbc ? { fbc } : {})
         },
-        custom_data: custom_data || {} // ej: { channel: 'whatsapp' }
-      }]
+        custom_data
+      }],
+      ...(test_event_code ? { test_event_code } : {})
     };
 
-    if (test_event_code) payload.test_event_code = test_event_code;
+    const url = `https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${accessToken}`;
+    const fbResp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-    const r = await fetch(
-      `https://graph.facebook.com/v20.0/${pixelId}/events?access_token=${accessToken}`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
-    );
+    const fbJson = await fbResp.json();
+    const traceId = fbResp.headers.get('x-fb-trace-id') || undefined;
 
-    const data = await r.json();
-    if (!r.ok) {
-      // devolvemos el error de Meta + el payload para debug rápido
-      return res.status(r.status).json({ error: 'Meta error', meta_response: data, sent_payload: payload });
+    if (!fbResp.ok) {
+      return res.status(fbResp.status).json({
+        ok: false,
+        error: 'Meta error',
+        trace_id: traceId,
+        meta_response: fbJson,
+        sent_payload: payload
+      });
     }
 
-    return res.status(200).json(data);
+    return res.status(200).json({ ok: true, fb: fbJson, trace_id: traceId });
   } catch (e) {
-    console.error('Error CAPI:', e);
-    return res.status(500).json({ error: 'Error al enviar evento a Meta', details: e.message });
+    return res.status(500).json({ ok: false, error: String(e?.message || e) });
   }
 }
