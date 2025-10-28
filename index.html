@@ -110,14 +110,28 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Click CTA
+      // Click CTA dinámico
+      const waNumber = "3513791153";
+      const mensajesWsp = [
+        "Hola, quiero crear un usuario! Mi nombre es:",
+        "Hola, mi nombre es ... quiero información para registrarme.",
+        "Hola, quiero más información para empezar a jugar!",
+        "Hola, me interesa participar! Mi nombre es:",
+        "Hola, quisiera saber cómo crear mi usuario."
+      ];
+      let indiceMensaje = 0;
+      const mensajeActual = () => mensajesWsp[indiceMensaje];
+      setInterval(() => {
+        indiceMensaje = (indiceMensaje + 1) % mensajesWsp.length;
+      }, 3000);
+
       const trigger = document.getElementById("btn");
       if (trigger) {
         trigger.addEventListener("click", function () {
           if (typeof fbq !== 'undefined') fbq('track', 'Contact');
-          // WhatsApp + texto prellenado (sin imágenes)
-          const encoded = "aHR0cHM6Ly93YS5tZS8zNTEzNDQ5MTYyP3RleHQ9SG9sYSUyQyUyMHF1aWVybyUyMGNyZWFyJTIwdW4lMjB1c3VhcmlvJTIxJTIwTWklMjBub21icmUlMjBlcw==";
-          window.open(atob(encoded), "_blank");
+          const texto = mensajeActual();
+          const waUrl = "https://wa.me/" + waNumber + "?text=" + encodeURIComponent(texto);
+          window.open(waUrl, "_blank");
         });
       }
 
