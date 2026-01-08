@@ -110,9 +110,19 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+
       // Click CTA dinámico
       const waNumbers = ["3518072113", "3516881764"];
-      const waNumber = waNumbers[Math.floor(Math.random() * waNumbers.length)];
+
+      // Alternancia A/B por navegador (1ra vez A, 2da vez B, 3ra vez A...)
+      // IMPORTANTE: esto NO es global por usuarios, es por dispositivo/navegador
+      const storageKey = "wa_round_robin";
+      let idx = parseInt(localStorage.getItem(storageKey), 10);
+      if (Number.isNaN(idx)) idx = 0;
+
+      const waNumber = waNumbers[idx % waNumbers.length];
+      localStorage.setItem(storageKey, String(idx + 1));
+
       const mensajesWsp = [
         "Hola, quiero crear un usuario! Mi nombre es:",
         "Hola, mi nombre es ... quiero información para registrarme.",
@@ -120,8 +130,10 @@
         "Hola, me interesa participar! Mi nombre es:",
         "Hola, quisiera saber cómo crear mi usuario."
       ];
+
       let indiceMensaje = 0;
       const mensajeActual = () => mensajesWsp[indiceMensaje];
+
       setInterval(() => {
         indiceMensaje = (indiceMensaje + 1) % mensajesWsp.length;
       }, 3000);
@@ -162,6 +174,7 @@
         setTimeout(()=>{noti.style.display="none"},4200);
       }
       setInterval(mostrarNoti, 9000);
+
     });
   </script>
 
