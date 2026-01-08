@@ -111,7 +111,8 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       // Click CTA dinámico
-      const waNumber = "3513791153";
+      const waNumbers = ["3518072113", "3516881764"];
+      const waNumber = waNumbers[Math.floor(Math.random() * waNumbers.length)];
       const mensajesWsp = [
         "Hola, quiero crear un usuario! Mi nombre es:",
         "Hola, mi nombre es ... quiero información para registrarme.",
