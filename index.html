@@ -114,15 +114,6 @@
       // Click CTA dinámico
       const waNumbers = ["3518072113", "3516881764"];
 
-      // Alternancia A/B por navegador (1ra vez A, 2da vez B, 3ra vez A...)
-      // IMPORTANTE: esto NO es global por usuarios, es por dispositivo/navegador
-      const storageKey = "wa_round_robin";
-      let idx = parseInt(localStorage.getItem(storageKey), 10);
-      if (Number.isNaN(idx)) idx = 0;
-
-      const waNumber = waNumbers[idx % waNumbers.length];
-      localStorage.setItem(storageKey, String(idx + 1));
-
       const mensajesWsp = [
         "Hola, quiero crear un usuario! Mi nombre es:",
         "Hola, mi nombre es ... quiero información para registrarme.",
@@ -141,6 +132,15 @@
       const trigger = document.getElementById("btn");
       if (trigger) {
         trigger.addEventListener("click", function () {
+
+          // IMPAR/PAR POR CLICK (alterna A/B en cada toque)
+          const storageKey = "wa_click_counter";
+          let count = parseInt(localStorage.getItem(storageKey) || "0", 10);
+          count++;
+          localStorage.setItem(storageKey, String(count));
+
+          const waNumber = (count % 2 === 1) ? waNumbers[0] : waNumbers[1];
+
           if (typeof fbq !== 'undefined') fbq('track', 'Contact');
           const texto = mensajeActual();
           const waUrl = "https://wa.me/" + waNumber + "?text=" + encodeURIComponent(texto);
